@@ -1,5 +1,8 @@
 {
-  "extends": "tslint-config-standard",
+  "extends": [
+    "tslint-config-standard",
+    "tslint-config-prettier"
+  ],
   "rules": {
     "no-consecutive-blank-lines": false // Do not remove this line since TSLint not support .vue file for now
   }
