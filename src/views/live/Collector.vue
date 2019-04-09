@@ -115,7 +115,8 @@
             let pc = this.cutPeerConnect as RTCPeerConnection;
             if (pc.remoteDescription && pc.remoteDescription.type) {
                 console.log('push candidate onto queue...', pc.remoteDescription.type)
-                //ClientB通过PeerConnection的AddIceCandidate方法保存起来
+
+                // ClientB通过PeerConnection的AddIceCandidate方法保存起来
                 pc.addIceCandidate(new RTCIceCandidate(message.candidate as RTCIceCandidateInit))
                     .catch(error => {
                         console.log('[addIceCandidate error]', message.candidate, error)

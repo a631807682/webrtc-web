@@ -139,10 +139,6 @@ export class LiveMixin extends Vue {
         let cutPeerConn = new RTCPeerConnection(this.rtcConfig);
         if (trackHandle) {
             cutPeerConn.ontrack = (trackHandle as TrackHandle).bind(cutPeerConn, to);
-            // cutPeerConn.addEventListener(
-            //     "track", e => (trackHandle as TrackHandle).bind(cutPeerConn, to), {
-            //         once: true
-            //     });
         }
 
         cutPeerConn.onicecandidate = (e: RTCPeerConnectionIceEvent) => {

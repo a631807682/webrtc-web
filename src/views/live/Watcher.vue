@@ -124,7 +124,7 @@
                     connect: pc
                 }));
 
-                pc.createOffer({ //接收视频音频
+                pc.createOffer({ // 接收视频音频
                     // offerToReceiveAudio: true,
                     offerToReceiveVideo: true
                 }).then((offer) => {
@@ -170,8 +170,9 @@
             this.send(message);
             this.removeConnectedPeerConn(key);
         }
-        /*
-        	断开已连接peerConn
+
+        /**
+         * 断开已连接peerConn
          */
         removeConnectedPeerConn(remoteKey: string) {
             let hangUpConnectIndex = this.peerConnects.findIndex(vc => vc.key === remoteKey);
