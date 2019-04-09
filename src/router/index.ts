@@ -7,15 +7,22 @@ import LiveWatcher from '@/views/live/Watcher'
 Vue.use(Router)
 
 export default new Router({
-  routes: [
+  routes: [{
+      path: '/index',
+      name: '采集监控',
+      component: LiveIndex
+    }, {
+      path: '/collector/:name',
+      component: LiveCollector,
+      name: '采集端'
+    }, {
+      path: '/watcher/:name',
+      component: LiveWatcher,
+      name: '观察端'
+    },
     {
-      path: '/',
-      name: '播放',
-      component: LiveIndex,
-      children: [
-        { path: 'collector', component: LiveCollector, name: '采集端' },
-        { path: 'watcher', component: LiveWatcher, name: '观察端' }
-      ]
+      path: '*',
+      redirect: { path: '/index' }
     }
   ]
 })
