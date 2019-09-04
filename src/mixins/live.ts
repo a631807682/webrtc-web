@@ -69,8 +69,7 @@ export class LiveMixin extends Vue {
 
     /** methods */
     connect2Signal() {
-        // let socket = io.connect(wsHost as string);
-        let socket = io.connect('https://live-sign.products.d3dstore.com:3001');
+        let socket = io.connect(wsHost as string);
         let disMessage = '网络异常 websocket已断开'
         socket.on('disconnect', () => {
             this.socketError = disMessage;
@@ -138,7 +137,8 @@ export class LiveMixin extends Vue {
     ) {
         let cutPeerConn = new RTCPeerConnection(this.rtcConfig);
         if (trackHandle) {
-            cutPeerConn.ontrack = (trackHandle as TrackHandle).bind(cutPeerConn, to);
+            cutPeerConn.ontrack
+             = (trackHandle as TrackHandle).bind(cutPeerConn, to);
         }
 
         cutPeerConn.onicecandidate = (e: RTCPeerConnectionIceEvent) => {
