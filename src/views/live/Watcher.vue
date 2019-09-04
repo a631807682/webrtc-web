@@ -21,7 +21,8 @@
                     <div slot="header" class="clearfix">
                         <span>远端图像{{pc.name}}</span>
                     </div>
-                    <video :ref="pc.key" :data-id="pc.key" playsinline style="width:100%" autoplay></video>
+                    <video :ref="pc.key" :data-id="pc.key" playsinline style="width:100%" autoplay controls
+                        controlsList="nodownload"></video>
                 </el-card>
             </el-col>
 
@@ -101,22 +102,26 @@
         handleAccept(message: ReceiveMessage) {
             let from = message.from as User;
             if (message.accept) {
+                let inboundStream: MediaStream | null = null;
                 // 对端同意，发送offer到对端
                 let pc = this.createConnection(
                     from,
                     (user, e) => {
-                        console.log('ontrack-------->', user.name, e.streams)
+                        console.log('ontrack', user.name, e.streams)
                         let peerConnect = this.peerConnects.find(p => p.key === user.key)
 
                         if (peerConnect) {
                             this.isConnecting = false;
 
-                            this.$nextTick(() => {
-                                let elements = this.$refs[user.key as string];
-                                let mediaElement = (elements as HTMLMediaElement[])[0];
-                                console.log('elements', mediaElement, e.streams[0])
-                                mediaElement.srcObject = e.streams[0];
-                            })
+                            if (!inboundStream) { // audio/video
+                                inboundStream = new MediaStream();
+                                this.$nextTick(() => {
+                                    let elements = this.$refs[user.key as string];
+                                    let mediaElement = (elements as HTMLMediaElement[])[0];
+                                    mediaElement.srcObject = e.streams[0];
+                                })
+                            }
+                            inboundStream.addTrack(e.track);
                         }
                     });
 
@@ -125,7 +130,7 @@
                 }));
 
                 pc.createOffer({ // 接收视频音频
-                    // offerToReceiveAudio: true,
+                    offerToReceiveAudio: true,
                     offerToReceiveVideo: true
                 }).then((offer) => {
                     let message: SendMessage = {

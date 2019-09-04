@@ -171,6 +171,7 @@ export class LiveMixin extends Vue {
         this.own = data.own;
     }
 
+    /* tslint:disable:no-empty */
     handleCall(data: ReceiveMessage) {}
     handleAccept(data: ReceiveMessage) {}
     handleOffer(data: ReceiveMessage) {}
