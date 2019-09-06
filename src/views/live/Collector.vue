@@ -6,7 +6,7 @@
             <video ref="test" playsinline class="mini" autoplay></video>
         </el-col>
 
-        <el-dialog title="提示" :visible.sync="showAccept" width="30%" center>
+        <el-dialog title="提示" :visible.sync="showAccept" center>
             <span>您有来自{{acceptFrom.name}}的视频邀请，是否接受?</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="accept(false)">拒 绝</el-button>
@@ -90,6 +90,9 @@
             let from = message.from as User;
 
             let pc = this.cutPeerConnect = this.createConnection(from);
+            let sessionDesc = new RTCSessionDescription(message.offer as RTCSessionDescriptionInit)
+            pc.setRemoteDescription(sessionDesc);
+
             this.createStream().then(stream => {
                 stream.getTracks().forEach((track) => {
                     console.log('getTracks', track, stream);
@@ -97,8 +100,6 @@
                     (this.$refs.test as HTMLMediaElement).srcObject = stream;
                 });
 
-                let sessionDesc = new RTCSessionDescription(message.offer as RTCSessionDescriptionInit)
-                pc.setRemoteDescription(sessionDesc);
                 pc.createAnswer().then(answer => {
                     pc.setLocalDescription(new RTCSessionDescription(answer));
                     let message: SendMessage = {
@@ -108,6 +109,10 @@
                     }
                     this.send(message)
                 })
+            }).catch(() => {
+                pc.close()
+                this.cutPeerConnect = null;
+                this.isConnecting = false;
             })
         }
 
@@ -121,6 +126,8 @@
                     .catch(error => {
                         console.log('[addIceCandidate error]', message.candidate, error)
                     });
+            } else {
+                console.warn('handleCandidate pc.remoteDescription.type undefined', pc.remoteDescription)
             }
         }
 

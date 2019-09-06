@@ -2,7 +2,7 @@
     <div>
         <el-col :span="24">
             <h1>监控 {{socketError}}</h1>
-            <el-col :span="12">
+            <el-col :span="24">
                 <el-table :data="collectors" v-loading="isConnecting">
                     <el-table-column prop="name" label="名称">
                     </el-table-column>
@@ -16,16 +16,15 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="4" v-for="pc in peerConnects" :key="pc.key" style="padding:15px">
+            <el-col :span="12" :xs="24" v-for="pc in peerConnects" :key="pc.key" style="padding:15px">
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>远端图像{{pc.name}}</span>
                     </div>
-                    <video :ref="pc.key" :data-id="pc.key" playsinline style="width:100%" autoplay controls
+                    <video :ref="pc.key" :key="pc.key" playsinline style="width:100%" controls :muted="false"
                         controlsList="nodownload"></video>
                 </el-card>
             </el-col>
-
         </el-col>
     </div>
 </template>
@@ -107,7 +106,7 @@
                 let pc = this.createConnection(
                     from,
                     (user, e) => {
-                        console.log('ontrack', user.name, e.streams)
+                        console.log('ontrack', user.name, e.track.readyState, e.track) //live
                         let peerConnect = this.peerConnects.find(p => p.key === user.key)
 
                         if (peerConnect) {
@@ -115,13 +114,14 @@
 
                             if (!inboundStream) { // audio/video
                                 inboundStream = new MediaStream();
-                                this.$nextTick(() => {
-                                    let elements = this.$refs[user.key as string];
-                                    let mediaElement = (elements as HTMLMediaElement[])[0];
-                                    mediaElement.srcObject = e.streams[0];
-                                })
+                                inboundStream.addTrack(e.track);
+                                let elements = this.$refs[user.key as string];
+                                let mediaElement = (elements as HTMLMediaElement[])[0];
+                                mediaElement.srcObject = inboundStream;
+                                mediaElement.play()
+                            } else {
+                                inboundStream.addTrack(e.track);
                             }
-                            inboundStream.addTrack(e.track);
                         }
                     });
 

@@ -11,8 +11,8 @@
                     </el-form-item>
                     <el-form-item label="类型">
                         <el-radio-group v-model="form.type">
-                            <el-radio label="collector">采集端</el-radio>
-                            <el-radio label="watcher">监控端</el-radio>
+                            <el-radio-button label="collector">采集端</el-radio-button>
+                            <el-radio-button label="watcher">监控端</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item>
