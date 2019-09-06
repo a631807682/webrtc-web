@@ -197,34 +197,4 @@ export class LiveMixin extends Vue {
     // console.log('send', message);
     (this.socket as SocketIOClient.Socket).send(message);
   }
-
-  play(video: HTMLMediaElement, delay = 5000) {
-    return new Promise((reslove, reject) => {
-      let playRes = video.play();
-      let t: NodeJS.Timeout | null = setTimeout(() => {
-        reject(new Error("play timeout"));
-      }, delay);
-
-      const clear = () => {
-        t && clearTimeout(t);
-        t = null;
-      };
-
-      if (playRes.then) {
-        playRes
-          .then(() => {
-            clear();
-            reslove();
-          })
-          .catch(err => {
-            clear();
-            reject(err);
-          });
-      } else {
-        clear();
-        console.warn("video play not support promise");
-        reslove();
-      }
-    });
-  }
 }
